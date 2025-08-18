@@ -1,4 +1,4 @@
-# Minimal requirements for Render deployment without pandas
+# Minimal requirements for deployment
 Flask==3.0.0
 Flask-CORS==4.0.0
 google-generativeai==0.3.2

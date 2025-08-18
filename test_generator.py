@@ -1,10 +1,17 @@
-import pandas as pd
+import csv
 import os
 from datetime import datetime
 from config import Config
 from gemini_client import GeminiClient
 import json
 import logging
+
+# Try to import pandas, fallback to native Python if not available
+try:
+    import pandas as pd
+    PANDAS_AVAILABLE = True
+except ImportError:
+    PANDAS_AVAILABLE = False
 
 logger = logging.getLogger(__name__)
 
@@ -102,9 +109,6 @@ class TestCaseGenerator:
             }
             csv_data.append(csv_row)
         
-        # Create DataFrame
-        df = pd.DataFrame(csv_data)
-        
         # Generate filename if not provided
         if not filename:
             timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
@@ -121,53 +125,71 @@ class TestCaseGenerator:
         output_path = os.path.join(Config.DOWNLOAD_FOLDER, filename)
         
         try:
-            # Save to Excel with auto-adjusted column widths
-            with pd.ExcelWriter(output_path, engine='openpyxl') as writer:
-                df.to_excel(writer, sheet_name='Test_Cases', index=False)
-                
-                # Get the workbook and worksheet
-                worksheet = writer.sheets['Test_Cases']
-                
-                # Auto-adjust column widths
-                for column in worksheet.columns:
-                    max_length = 0
-                    column_letter = column[0].column_letter
+            if PANDAS_AVAILABLE:
+                # Create DataFrame and save with pandas
+                df = pd.DataFrame(csv_data)
+                # Save to Excel with auto-adjusted column widths
+                with pd.ExcelWriter(output_path, engine='openpyxl') as writer:
+                    df.to_excel(writer, sheet_name='Test_Cases', index=False)
                     
-                    for cell in column:
-                        if cell.value:
-                            cell_length = len(str(cell.value))
+                    # Get the workbook and worksheet
+                    worksheet = writer.sheets['Test_Cases']
+                    
+                    # Auto-adjust column widths
+                    for column in worksheet.columns:
+                        max_length = 0
+                        column_letter = column[0].column_letter
+                        
+                        for cell in column:
+                            if cell.value:
+                                cell_length = len(str(cell.value))
                             if cell_length > max_length:
                                 max_length = cell_length
+                        
+                        # Set column width (with some padding)
+                        adjusted_width = min(max_length + 2, 50)  # Max width of 50
+                        worksheet.column_dimensions[column_letter].width = adjusted_width
                     
-                    # Set column width (with some padding)
-                    adjusted_width = min(max_length + 2, 50)  # Max width of 50
-                    worksheet.column_dimensions[column_letter].width = adjusted_width
+                    # Set specific column widths for better readability
+                    worksheet.column_dimensions['K'].width = 80  # Test Steps column
+                    worksheet.column_dimensions['M'].width = 40  # Expected Result column
+                    worksheet.column_dimensions['N'].width = 50  # FRD Reference column
+                    worksheet.column_dimensions['I'].width = 45  # Gap Coverage column
+                    
+                    # Add header formatting
+                    from openpyxl.styles import Font, PatternFill, Alignment
+                    
+                    header_font = Font(bold=True, color="FFFFFF")
+                    header_fill = PatternFill(start_color="366092", end_color="366092", fill_type="solid")
+                    
+                    for cell in worksheet[1]:
+                        cell.font = header_font
+                        cell.fill = header_fill
+                        cell.alignment = Alignment(horizontal="center", vertical="center")
+                    
+                    # Set text wrapping for test steps column
+                    for row in worksheet.iter_rows(min_row=2, max_row=worksheet.max_row, min_col=11, max_col=11):
+                        for cell in row:
+                            cell.alignment = Alignment(wrap_text=True, vertical="top")
+            else:
+                # Use openpyxl directly without pandas
+                from openpyxl import Workbook
+                wb = Workbook()
+                ws = wb.active
+                ws.title = "Test_Cases"
                 
-                # Set specific column widths for better readability
-                worksheet.column_dimensions['K'].width = 80  # Test Steps column
-                worksheet.column_dimensions['M'].width = 40  # Expected Result column
-                worksheet.column_dimensions['N'].width = 50  # FRD Reference column
-                worksheet.column_dimensions['I'].width = 45  # Gap Coverage column
+                # Add headers
+                if csv_data:
+                    headers = list(csv_data[0].keys())
+                    ws.append(headers)
+                    
+                    # Add data
+                    for row_data in csv_data:
+                        row = [row_data.get(header, '') for header in headers]
+                        ws.append(row)
                 
-                # Add header formatting
-                from openpyxl.styles import Font, PatternFill, Alignment
-                
-                header_font = Font(bold=True, color="FFFFFF")
-                header_fill = PatternFill(start_color="366092", end_color="366092", fill_type="solid")
-                
-                for cell in worksheet[1]:
-                    cell.font = header_font
-                    cell.fill = header_fill
-                    cell.alignment = Alignment(horizontal="center", vertical="center")
-                
-                # Set text wrapping for test steps column
-                for row in worksheet.iter_rows(min_row=2, max_row=worksheet.max_row, min_col=11, max_col=11):
-                    for cell in row:
-                        cell.alignment = Alignment(wrap_text=True, vertical="top")
+                wb.save(output_path)
         
-        except ImportError:
-            logger.error("openpyxl not available, cannot create Excel file")
-            return None, "Excel library not available"
         except Exception as e:
             logger.error(f"Could not create Excel file: {e}")
             return None, f"Could not create Excel file: {e}"
@@ -181,8 +203,6 @@ class TestCaseGenerator:
         if not self.all_test_cases:
             return {}
         
-        df = pd.DataFrame(self.all_test_cases)
-        
         stats = {
             'total_test_cases': len(self.all_test_cases),
             'test_types': {},
@@ -190,6 +210,22 @@ class TestCaseGenerator:
             'features': {},
             'modules': {}
         }
+        
+        if PANDAS_AVAILABLE:
+            df = pd.DataFrame(self.all_test_cases)
+            # Use pandas for stats if available
+            if 'test_type' in df.columns:
+                stats['test_types'] = df['test_type'].value_counts().to_dict()
+            if 'priority' in df.columns:
+                stats['priorities'] = df['priority'].value_counts().to_dict()
+        else:
+            # Calculate stats manually
+            for test_case in self.all_test_cases:
+                test_type = test_case.get('test_type', 'Unknown')
+                priority = test_case.get('priority', 'Unknown')
+                
+                stats['test_types'][test_type] = stats['test_types'].get(test_type, 0) + 1
+                stats['priorities'][priority] = stats['priorities'].get(priority, 0) + 1
         
         if 'test_type' in df.columns:
             stats['test_types'] = df['test_type'].value_counts().to_dict()

@@ -3,8 +3,15 @@ from config import Config
 import json
 import time
 import logging
-import pandas as pd
+import csv
 import os
+
+# Try to import pandas, fallback to native Python if not available
+try:
+    import pandas as pd
+    PANDAS_AVAILABLE = True
+except ImportError:
+    PANDAS_AVAILABLE = False
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -26,8 +33,14 @@ class GeminiClient:
         try:
             csv_path = 'Few_Shot_Prompting_Rib.csv'
             if os.path.exists(csv_path):
-                df = pd.read_csv(csv_path)
-                return df.to_dict('records')
+                if PANDAS_AVAILABLE:
+                    df = pd.read_csv(csv_path)
+                    return df.to_dict('records')
+                else:
+                    # Use native Python CSV reader
+                    with open(csv_path, 'r', encoding='utf-8') as file:
+                        reader = csv.DictReader(file)
+                        return list(reader)
             else:
                 logger.warning("Few_Shot_Prompting_Rib.csv not found, using default examples")
                 return []
@@ -40,8 +53,14 @@ class GeminiClient:
         try:
             csv_path = 'Key_Value_Pair_.csv'
             if os.path.exists(csv_path):
-                df = pd.read_csv(csv_path)
-                return df.to_dict('records')
+                if PANDAS_AVAILABLE:
+                    df = pd.read_csv(csv_path)
+                    return df.to_dict('records')
+                else:
+                    # Use native Python CSV reader
+                    with open(csv_path, 'r', encoding='utf-8') as file:
+                        reader = csv.DictReader(file)
+                        return list(reader)
             else:
                 logger.warning("Key_Value_Pair_.csv not found")
                 return []
