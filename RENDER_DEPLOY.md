@@ -1,11 +1,11 @@
 # 🚀 Render Deployment Guide for AI Test Case Generator
 
-## Quick Deploy to Render (Free)
+## Quick Deploy to Render (Free) - FIXED VERSION
 
 ### Step 1: Push to GitHub
 ```bash
 git add .
-git commit -m "Add Render deployment configuration"
+git commit -m "Fix Render deployment - Python 3.11 + minimal dependencies"
 git push origin main
 ```
 
@@ -14,13 +14,14 @@ git push origin main
 2. **Click "New +" → "Web Service"**
 3. **Connect your GitHub repository: `TestCaseGenerator`**
 
-### Step 3: Configure Deployment
+### Step 3: Configure Deployment (UPDATED)
 **Service Configuration:**
 - **Name**: `ai-testcase-generator`
 - **Environment**: `Python 3`
+- **Runtime**: `Python 3.11.9`
 - **Build Command**: 
   ```bash
-  pip install --upgrade pip setuptools wheel && pip install --no-cache-dir -r requirements.txt
+  python -m pip install --upgrade pip && pip install --no-cache-dir -r requirements_minimal.txt
   ```
 - **Start Command**: 
   ```bash
@@ -36,8 +37,9 @@ SECRET_KEY=thisissecretkey
 GEMINI_API_KEY=AIzaSyBEqJgbfk40_oU-G4nzCOW9vPwbE2cOc30
 FLASK_ENV=production
 FLASK_DEBUG=false
-PYTHON_VERSION=3.9.16
+PYTHON_VERSION=3.11.9
 RENDER=true
+USE_MINIMAL_DEPS=true
 ```
 
 ### Step 5: Deploy!
@@ -45,13 +47,22 @@ RENDER=true
 - Render will automatically build and deploy your app
 - Your app will be available at: `https://your-app-name.onrender.com`
 
-## 🔧 Alternative: Manual Configuration
+## 🔧 What's Fixed
 
-If you prefer to use the `render.yaml` file:
+### ✅ **Python 3.11 Compatibility**
+- Updated to Python 3.11.9 (stable with pandas)
+- Fixed setuptools import issues
+- Compatible pip version
 
-1. **Use the provided `render.yaml` configuration**
-2. **Render will automatically detect and use it**
-3. **Just add environment variables in the dashboard**
+### ✅ **Minimal Dependencies Option**
+- Created `requirements_minimal.txt` without pandas
+- Fallback CSV export using native Python
+- Excel export with openpyxl only
+
+### ✅ **Smart Import System**
+- App automatically detects environment
+- Uses minimal dependencies on Render
+- Falls back gracefully if pandas unavailable
 
 ## 📊 After Deployment
 
@@ -59,33 +70,39 @@ If you prefer to use the `render.yaml` file:
 - **Application URL**: `https://ai-testcase-generator.onrender.com`
 - **Health Check**: `https://ai-testcase-generator.onrender.com/health`
 
-### Monitor Deployment
-- **View Logs**: In Render dashboard → Logs
-- **Check Status**: Dashboard shows build and deployment status
-- **Auto-deploys**: Every GitHub push triggers automatic deployment
+### Features Working
+- ✅ **Document upload** (PDF, DOCX, TXT)
+- ✅ **AI test case generation** with Gemini
+- ✅ **Real-time progress** updates
+- ✅ **CSV export** (native Python fallback)
+- ✅ **Excel export** (openpyxl)
+- ✅ **Statistics dashboard**
 
-## 🎯 Features Enabled
-- ✅ **Free hosting** (512MB RAM, 100GB bandwidth)
-- ✅ **Automatic HTTPS** certificate
-- ✅ **Auto-deploys** from GitHub
-- ✅ **Health monitoring** with `/health` endpoint
-- ✅ **Gemini AI integration** ready
-- ✅ **File upload/download** functionality
-- ✅ **Optimized for pandas** (no compilation issues)
+## 🎯 Alternative: Use render_minimal.yaml
+
+If you prefer automatic configuration:
+
+1. **Rename `render_minimal.yaml` to `render.yaml`**
+2. **Push to GitHub**
+3. **Render will use the YAML configuration automatically**
 
 ## 🔍 Troubleshooting
 
-### Common Issues
-1. **Build fails**: Check logs in Render dashboard
-2. **Environment variables**: Ensure all required vars are set
-3. **Health check fails**: Verify `/health` endpoint works
-4. **Timeout errors**: Increase worker timeout if needed
+### If Build Still Fails
+1. **Use minimal requirements**:
+   ```bash
+   # In Render dashboard, change build command to:
+   pip install Flask==3.0.0 Flask-CORS==4.0.0 google-generativeai==0.3.2 python-dotenv==1.0.0 gunicorn==21.2.0
+   ```
 
-### Getting Help
-- **Render Logs**: Real-time build and runtime logs
-- **Health Check**: Built-in monitoring
-- **GitHub Integration**: Automatic deployments
+2. **Check Python version**:
+   - Ensure Runtime is set to `Python 3.11.9`
+   - Add `PYTHON_VERSION=3.11.9` environment variable
+
+3. **Monitor build logs**:
+   - Check real-time logs in Render dashboard
+   - Look for specific error messages
 
 ---
 
-**Your AI Test Case Generator is now ready for free deployment on Render! 🎉**
+**This fixed version should deploy successfully on Render! 🎉**

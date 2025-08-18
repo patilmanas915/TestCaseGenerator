@@ -16,7 +16,15 @@ except ImportError:
     ConfigClass = Config
 
 from document_processor import DocumentProcessor
-from test_generator import TestCaseGenerator
+
+# Import TestCaseGenerator based on environment
+if os.environ.get('RENDER') or os.environ.get('USE_MINIMAL_DEPS'):
+    try:
+        from test_generator_render import TestCaseGenerator
+    except ImportError:
+        from test_generator import TestCaseGenerator
+else:
+    from test_generator import TestCaseGenerator
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)

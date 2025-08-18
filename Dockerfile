@@ -1,5 +1,5 @@
-# Render-optimized Docker configuration
-FROM python:3.9-slim
+# Render-optimized Docker configuration for Python 3.11
+FROM python:3.11.9-slim
 
 # Set working directory
 WORKDIR /app
@@ -10,10 +10,12 @@ RUN apt-get update && apt-get install -y \
     g++ \
     curl \
     build-essential \
+    pkg-config \
     && rm -rf /var/lib/apt/lists/*
 
-# Upgrade pip and install build tools
-RUN pip install --upgrade pip setuptools wheel
+# Upgrade pip and install compatible build tools
+RUN python -m pip install --upgrade pip==24.0
+RUN pip install setuptools==69.5.1 wheel==0.43.0
 
 # Copy requirements first for better caching
 COPY requirements.txt .
