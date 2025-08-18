@@ -1,0 +1,250 @@
+﻿Input,Output
+"This line is taken from the FRD document for the Rib function, and I would like to create test scenarios based on it
+
+Function affected:  “Solid / Rib”.","The following test scenario for the Rib feature is derived from the corresponding line in the FRD document:
+
+1. Launch Cimatron
+
+2. Open New Part MM file .
+
+3. Invoke Rib From Icon Menu /Main Menu > Solid > Creation > Rib
+
+Exp: Rib feature should be available in Solid menu - Creation submenu."
+"This line is taken from the FRD document for the Rib function, and I would like to create test scenarios based on it
+
+At stage 1, allow for multiple curve selection.","The following test scenario for the Rib feature is derived from the corresponding line in the FRD document:
+
+1. Launch Cimatron
+
+2. Create a shell part and create sketch of multiple curves on top face of shell part.
+
+3. Invoke Rib From Icon Menu /Main Menu > Solid > Creation > Rib
+
+4. Select multiple curves.
+
+Exp: Rib feature should allow multiple curves selection"
+"This line is taken from the FRD document for the Rib function, and I would like to create test scenarios based on it
+
+Change the prompt from “Pick reference contour, curve, or line.” to “Pick the rib centerline curves ”.","The following test scenario for the Rib feature is derived from the corresponding line in the FRD document:
+
+1. Launch Cimatron
+
+2. Create a shell part and create sketch of multiple curves on top face of shell part.
+
+3. Invoke Rib From Icon Menu /Main Menu > Solid > Creation > Rib
+
+4. Select multiple curves.
+
+Exp: Rib feature should allow multiple curves selection"
+"This line is taken from the FRD document for the Rib function, and I would like to create test scenarios based on it
+
+Require a confirm step (middle mouse button) to move on to step 2 of the function.","The following test scenario for the Rib feature is derived from the corresponding line in the FRD document:
+
+1. Launch Cimatron
+
+2. Create a shell part and create sketch of multiple curves on top face of shell part.
+
+3. Invoke Rib From Icon Menu /Main Menu > Solid > Creation > Rib
+
+4. Select multiple curves.
+
+5. MMB / Go to Next Stage.
+
+6. Click OK in feature guild.
+
+Exp: By clicking middle mouse button Rib feature should allow to 2nd step"
+"This line is taken from the FRD document for the Rib function, and I would like to create test scenarios based on it
+
+Preview mode should stay as is – Manual.","The following test scenario for the Rib feature is derived from the corresponding line in the FRD document:
+
+1. Launch Cimatron
+
+2. Create a shell part and create sketch of multiple curves on top face of shell part.
+
+3. Invoke Rib From Icon Menu /Main Menu > Solid > Creation > Rib
+
+4. Select multiple curves.
+
+5. MMB / Go to Next Stage.
+
+Exp: By default manual preview should be selected."
+"This line is taken from the FRD document for the Rib function, and I would like to create test scenarios based on it
+
+When a Rib has a draft angle, the system creates the rib with flat top, and then applies the function Round 3 Faces – this expected result is presented by the green round on the right.","The following test scenario for the Rib feature is derived from the corresponding line in the FRD document:
+
+1. Launch Cimatron
+
+2. Create a shell part and create sketch of multiple curves on top face of shell part.
+
+3. Invoke Rib From Icon Menu /Main Menu > Solid > Creation > Rib
+
+4. Select multiple curves.
+
+5. MMB / Go to Next Stage.
+
+6. Toggle SP3 to Tapered and give draft angle.
+
+7. Toggle SP4 to Rounded Top.
+
+9. Click on Ok in feature guide.
+
+Exp: Created rib feature should have uniform rounded top."
+"This line is taken from the FRD document for the Rib function, and I would like to create test scenarios based on it
+
+When a Rib is Straight (i.e., does not have draft angle) the round is done on a plane that is perpendicular to the XY plane.  This un-expected result is presented by the red round on the central rib.","The following test scenario for the Rib feature is derived from the corresponding line in the FRD document:
+
+1. Launch Cimatron
+
+2. Create a shell part and create sketch of multiple curves on top face of shell part.
+
+3. Invoke Rib From Icon Menu /Main Menu > Solid > Creation > Rib
+
+4. Select multiple curves.
+
+5. MMB / Go to Next Stage.
+
+6. Toggle SP3 to No Draft Angle.
+
+7. Toggle SP4 to Rounded Top.
+
+9. Click on Ok in feature guide.
+
+Exp: Created rib feature should have uniform rounded top."
+"This line is taken from the FRD document for the Rib function, and I would like to create test scenarios based on it
+
+Rename existing parameter ‘Negative Offset’ to ‘Additional Delta Height’.","The following test scenario for the Rib feature is derived from the corresponding line in the FRD document:
+
+1. Launch Cimatron
+
+2. Create a shell part and create sketch of multiple curves on top face of shell part.
+
+3. Invoke Rib From Icon Menu /Main Menu > Solid > Creation > Rib
+
+4. Select multiple curves.
+
+5. MMB / Go to Next Stage.
+
+Exp: SP6 should be ""Additional Delta Height""."
+" This line is taken from the FRD document for the Rib function, and I would like to create test scenarios based on it
+
+Positive or negative numbers are allowed.","The following test scenario for the Rib feature is derived from the corresponding line in the FRD document:
+
+1. Launch Cimatron
+
+2. Create a shell part and create sketch of multiple curves on top face of shell part.
+
+3. Invoke Rib From Icon Menu /Main Menu > Solid > Creation > Rib
+
+4. Select multiple curves.
+
+5. MMB / Go to Next Stage.
+
+6. Change Value of Additional Delta Height SP6 to 10.
+
+7. Click on Ok in Feature Guide.
+
+8. Edit last Created Edit Feature.
+
+9. Change Value of Additional Delta Height SP6 to -10.
+
+10. Click on Ok in feature Guide.
+
+Exp: Positive and Negative number should be allowed for Additional Delta Height"
+"This line is taken from the FRD document for the Rib function, and I would like to create test scenarios based on it
+
+Default = 0.0","The following test scenario for the Rib feature is derived from the corresponding line in the FRD document:
+
+1. Launch Cimatron
+
+2. Create a shell part and create sketch of multiple curves on top face of shell part.
+
+3. Invoke Rib From Icon Menu /Main Menu > Solid > Creation > Rib
+
+4. Select multiple curves.
+
+5. MMB / Go to Next Stage.
+
+Exp: SP6 should be ""Additional Delta Height"" and default Value should be 0."
+"This line is taken from the FRD document for the Rib function, and I would like to create test scenarios based on it
+
+Positive value – Rib curve is moved opposite to the Rib’s direction arrow. It means that the Rib become “taller”.","The following test scenario for the Rib feature is derived from the corresponding line in the FRD document:
+
+1. Launch Cimatron
+
+2. Create a shell part and create sketch of multiple curves on top face of shell part.
+
+3. Invoke Rib From Icon Menu /Main Menu > Solid > Creation > Rib
+
+4. Select multiple curves.
+
+5. MMB / Go to Next Stage.
+
+6. Change Value of Additional Delta Height SP6 to 10.
+
+7. Click on Ok in Feature Guide.
+
+Exp: Rib curve is moved opposite to the Rib’s direction arrow. It means that the Rib become “taller”"
+"This line is taken from the FRD document for the Rib function, and I would like to create test scenarios based on it
+
+Negative value – Rib curve is moved in the Rib’s direction arrow. It means that the Rib become “shorter”.","The following test scenario for the Rib feature is derived from the corresponding line in the FRD document:
+
+1. Launch Cimatron
+
+2. Create a shell part and create sketch of multiple curves on top face of shell part.
+
+3. Invoke Rib From Icon Menu /Main Menu > Solid > Creation > Rib
+
+4. Select multiple curves.
+
+5. MMB / Go to Next Stage.
+
+6. Change Value of Additional Delta Height SP6 to -10.
+
+7. Click on Ok in Feature Guide.
+
+Exp: Rib curve is moved in the Rib’s direction arrow. It means that the Rib become “shorter”"
+"This line is taken from the FRD document for the Rib function, and I would like to create test scenarios based on it
+
+Rename existing parameter ‘Thickness’ to ‘Top Thickness’","The following test scenario for the Rib feature is derived from the corresponding line in the FRD document:
+
+1. Launch Cimatron
+
+2. Create a shell part and create sketch of multiple curves on top face of shell part.
+
+3. Invoke Rib From Icon Menu /Main Menu > Solid > Creation > Rib
+
+4. Select multiple curves.
+
+5. MMB / Go to Next Stage.
+
+Exp: SP3 should be ""Top Thickness""."
+"This line is taken from the FRD document for the Rib function, and I would like to create test scenarios based on it
+
+New SP – ‘Close Gaps between Ribs and Object’ ","The following test scenario for the Rib feature is derived from the corresponding line in the FRD document:
+
+1. Launch Cimatron
+
+2. Create a shell part and create sketch of multiple curves on top face of shell part.
+
+3. Invoke Rib From Icon Menu /Main Menu > Solid > Creation > Rib
+
+4. Select multiple curves.
+
+5. MMB / Go to Next Stage.
+
+Exp: SP7 should be ""Close Gaps Between Ribs and Object""."
+"This line is taken from the FRD document for the Rib function, and I would like to create test scenarios based on it
+
+Default – Close Gaps between Ribs and Object.","The following test scenario for the Rib feature is derived from the corresponding line in the FRD document:
+
+1. Launch Cimatron
+
+2. Create a shell part and create sketch of multiple curves on top face of shell part.
+
+3. Invoke Rib From Icon Menu /Main Menu > Solid > Creation > Rib
+
+4. Select multiple curves.
+
+5. MMB / Go to Next Stage.
+
+Exp: SP7 Default Value Should be ""Close Gaps Between Ribs and Object""."

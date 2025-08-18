@@ -1,0 +1,75 @@
+Test Case ID,Test Case Name,Feature ID,Feature Name,Module,Test Type,Priority,Category,Preconditions,Test Steps,Test Data,Expected Result,Generated On
+TC001,Successful Rib Creation with Simple Profile,F001,Rib Creation Partial Results,Part Design - Solid,Positive,High,Functional,Create a simple solid part.,"1. Step 1: Select a planar face of the solid.
+2. Step 2: Create a simple sketch (e.g., a rectangle) on the selected face.
+3. Step 3: Use the Rib feature with default settings and the created sketch as the profile.",Simple rectangular sketch,Rib is created successfully without any errors. The resulting solid is valid.,2025-08-16 10:04:28
+TC002,Partial Rib Creation with Intersecting Geometry,F001,Rib Creation Partial Results,Part Design - Solid,Positive,High,Functional,Create a solid part with intersecting geometry.,"1. Step 1: Select a sketch profile that partially intersects with existing geometry.
+2. Step 2: Use the Rib feature with default settings and the created sketch as the profile.",Sketch intersecting with existing geometry,"Rib is partially created, excluding the intersecting part. Conflict Solver provides specific warnings about the intersection and related features.",2025-08-16 10:04:28
+TC003,Partial Merging of Solids,F001,Rib Creation Partial Results,Part Design - Solid,Positive,High,Functional,Create two separate solid parts with a common face.,"1. Step 1: Create a sketch profile that spans across the shared face of both parts.
+2. Step 2: Use the Rib feature with default settings and the created sketch.",Two solid parts and a sketch spanning across their shared face,"Rib is partially created and merged with the relevant faces of each part, resulting in a single connected solid.",2025-08-16 10:04:28
+TC004,Invalid Sketch Profile,F001,Rib Creation Partial Results,Part Design - Solid,Negative,High,Functional,Create a solid part.,"1. Step 1: Create an invalid sketch profile (e.g., open contour).
+2. Step 2: Attempt to use the Rib feature with the invalid sketch.",Open contour sketch,Rib creation fails. An error message is displayed indicating the invalid sketch profile.,2025-08-16 10:04:28
+TC005,Extremely Thin Rib,F001,Rib Creation Partial Results,Part Design - Solid,Boundary,Medium,Functional,Create a solid part.,"1. Step 1: Create a very thin rib profile (close to system tolerance).
+2. Step 2: Use the Rib feature.",Extremely thin sketch profile,Rib is either created successfully or fails gracefully with an appropriate error message in the Conflict Solver.,2025-08-16 10:04:28
+TC006,Complex Sketch with Multiple Contours,F001,Rib Creation Partial Results,Part Design - Solid,Edge,Low,Functional,Create a solid part.,"1. Step 1: Create a complex sketch with many intersecting and overlapping contours.
+2. Step 2: Use the Rib feature.",Complex multi-contour sketch,"Rib creation handles the complex sketch as expected, creating partial ribs where possible and providing clear warnings in the Conflict Solver for failed portions.",2025-08-16 10:04:28
+TC007,Rib Creation with Move Feature Interference,F001,Rib Creation Partial Results,Part Design - Solid,Negative,High,Functional,Create a solid part with a pre-existing Move Feature.,"1. Step 1: Attempt to create a rib that would interfere with the moved geometry.
+2. Step 2: Observe the Conflict Solver messages.",Solid part with a move feature,Rib creation partially succeeds or fails.  Conflict Solver specifically mentions the interference with the Move feature and identifies the problematic area.,2025-08-16 10:04:28
+TC008,Large Rib with System Resource Limits,F001,Rib Creation Partial Results,Part Design - Solid,Edge,Low,Non-functional,Create a large solid part.,"1. Step 1: Create a very large sketch profile for a rib that pushes the system resource limits (memory, processing).
+2. Step 2: Attempt to create the rib.",Extremely large sketch profile,"Rib creation either completes successfully, partially succeeds with appropriate Conflict Solver messages about limitations, or fails gracefully with an informative error message.  No system crashes or freezes occur.",2025-08-16 10:04:28
+TC001,Create New Rib,F002,Rib Creation Mode Selection (New/Add),Part Design - Solid,Positive,High,Functional,Open Part Design workbench.  A valid sketch for rib creation is available.,"1. Step 1: Select the rib creation tool.
+2. Step 2: Choose 'New' for the selection parameter (SP).
+3. Step 3: Enter valid parameters for the rib (thickness, length, etc.).
+4. Step 4: Click 'OK' to create the rib.",N/A,"A new, separate solid rib (purple) is created based on the sketch.",2025-08-16 10:04:28
+TC002,Add Rib to Existing Solid,F002,Rib Creation Mode Selection (New/Add),Part Design - Solid,Positive,High,Functional,Open Part Design workbench. A valid sketch for rib creation is available. An existing solid body is present.,"1. Step 1: Select the rib creation tool.
+2. Step 2: Choose 'Add' for the selection parameter (SP).
+3. Step 3: Enter valid parameters for the rib.
+4. Step 4: Click 'OK' to create the rib.",N/A,"The new rib (blue) is merged with the existing solid, forming a single body.",2025-08-16 10:04:28
+TC003,Default Mode is Add,F002,Rib Creation Mode Selection (New/Add),Part Design - Solid,Positive,High,Functional,Open Part Design workbench. A valid sketch for rib creation is available. An existing solid body is present.,"1. Step 1: Select the rib creation tool.
+2. Step 2: Verify the default selection parameter (SP) is set to 'Add'.
+3. Step 3: Enter valid parameters for the rib.
+4. Step 4: Click 'OK' to create the rib.",N/A,"The new rib is added to the existing solid, confirming 'Add' is the default mode.",2025-08-16 10:04:28
+TC004,Disabled Options with 'New',F002,Rib Creation Mode Selection (New/Add),Part Design - Solid,Positive,Medium,Functional,Open Part Design workbench. A valid sketch for rib creation is available.,"1. Step 1: Select the rib creation tool.
+2. Step 2: Choose 'New' for the selection parameter (SP).
+3. Step 3: Verify that 'Invert Active Object' and 'Pick reference object' options are disabled.",N/A,'Invert Active Object' and 'Pick reference object' options are greyed out and unavailable.,2025-08-16 10:04:28
+TC005,Invalid Sketch,F002,Rib Creation Mode Selection (New/Add),Part Design - Solid,Negative,High,Functional,"Open Part Design workbench. An invalid sketch (e.g., open contour) is selected.","1. Step 1: Select the rib creation tool.
+2. Step 2: Attempt to create a rib using either 'New' or 'Add' mode.",Invalid sketch,An error message is displayed indicating the sketch is invalid.  No rib is created.,2025-08-16 10:04:28
+TC006,Zero Thickness Rib,F002,Rib Creation Mode Selection (New/Add),Part Design - Solid,Boundary,Medium,Functional,Open Part Design workbench. A valid sketch is available.,"1. Step 1: Select the rib creation tool.
+2. Step 2: Set rib thickness to 0.
+3. Step 3: Attempt to create a rib using either 'New' or 'Add' mode.",Thickness = 0,System either prevents rib creation with an error message or creates a rib with minimal thickness (depending on system tolerance).,2025-08-16 10:04:28
+TC007,Extremely Large Thickness Rib,F002,Rib Creation Mode Selection (New/Add),Part Design - Solid,Edge,Low,Functional,Open Part Design workbench. A valid sketch is available.,"1. Step 1: Select the rib creation tool.
+2. Step 2: Set rib thickness to an extremely large value (e.g., 10000mm).
+3. Step 3: Attempt to create a rib using either 'New' or 'Add' mode.",Thickness = 10000mm,"System handles the large value gracefully, either creating the rib or displaying a warning/error if computational limits are reached.",2025-08-16 10:04:28
+TC008,Add Rib to Non-Solid Object,F002,Rib Creation Mode Selection (New/Add),Part Design - Solid,Negative,Medium,Functional,"Open Part Design workbench. A valid sketch is available. A non-solid object (e.g., a face) is selected as the base object.","1. Step 1: Select the rib creation tool.
+2. Step 2: Choose 'Add' mode.
+3. Step 3: Attempt to add the rib to the non-solid object.",Non-solid object,"An error message is displayed, and the rib is not added. The system should only allow adding ribs to existing solid bodies.",2025-08-16 10:04:28
+TC001,Rib Creation - By Delta - New Mode - Positive,F003,Rib Extents Definition (By Delta/By Reference/To Closest),Part Design - Solid,Positive,High,Functional,"Part Design workbench open, a sketch defining the Rib profile is created.","1. Step 1: Start the Rib feature in 'New' mode.
+2. Step 2: Select 'By Delta' extent option.
+3. Step 3: Enter a delta value of 50mm.
+4. Step 4: Click OK to create the Rib.",Delta: 50mm,Rib is created successfully with the specified delta offset.,2025-08-16 10:04:28
+TC002,Rib Creation - By Reference - New Mode - Positive,F003,Rib Extents Definition (By Delta/By Reference/To Closest),Part Design - Solid,Positive,High,Functional,"Part Design workbench open, a sketch defining the Rib profile is created, a reference face exists.","1. Step 1: Start the Rib feature in 'New' mode.
+2. Step 2: Select 'By Reference' extent option.
+3. Step 3: Select the reference face.
+4. Step 4: Enter an offset value of 25mm.
+5. Step 5: Click OK to create the Rib.",Offset from Ref.: 25mm,"Rib is created successfully, extending to the reference face with the specified offset.",2025-08-16 10:04:28
+TC003,Rib Creation - To Closest - New Mode - Positive,F003,Rib Extents Definition (By Delta/By Reference/To Closest),Part Design - Solid,Positive,High,Functional,"Part Design workbench open, a sketch defining the Rib profile is created, adjacent surfaces exist.","1. Step 1: Start the Rib feature in 'New' mode.
+2. Step 2: Select 'To Closest' extent option.
+3. Step 3: Click OK to create the Rib.",N/A,"Rib is created successfully, extending to the closest adjacent surface.",2025-08-16 10:04:28
+TC004,Rib Creation - To Closest - Add Mode - Positive,F003,Rib Extents Definition (By Delta/By Reference/To Closest),Part Design - Solid,Positive,High,Functional,"Part Design workbench open, an existing Rib feature is selected.","1. Step 1: Start the Rib feature in 'Add' mode.
+2. Step 2: Verify that only 'To Closest' option is available.
+3. Step 3: Click OK to extend the Rib.",N/A,Rib is extended successfully to the closest adjacent surface.,2025-08-16 10:04:28
+TC005,Rib Creation - Invalid Delta Value - Negative,F003,Rib Extents Definition (By Delta/By Reference/To Closest),Part Design - Solid,Negative,Medium,Functional,"Part Design workbench open, a sketch defining the Rib profile is created.","1. Step 1: Start the Rib feature in 'New' mode.
+2. Step 2: Select 'By Delta' extent option.
+3. Step 3: Enter a negative delta value (-50mm).
+4. Step 4: Click OK.",Delta: -50mm,Error message displayed indicating invalid delta value. Rib is not created.,2025-08-16 10:04:28
+TC006,Rib Creation - No Reference Selected - Negative,F003,Rib Extents Definition (By Delta/By Reference/To Closest),Part Design - Solid,Negative,Medium,Functional,"Part Design workbench open, a sketch defining the Rib profile is created.","1. Step 1: Start the Rib feature in 'New' mode.
+2. Step 2: Select 'By Reference' extent option.
+3. Step 3: Do not select any reference face.
+4. Step 4: Click OK.",N/A,Error message displayed indicating missing reference selection. Rib is not created.,2025-08-16 10:04:28
+TC007,Rib Creation - Default Delta Value - Boundary,F003,Rib Extents Definition (By Delta/By Reference/To Closest),Part Design - Solid,Boundary,Medium,Functional,"Part Design workbench open, a sketch defining the Rib profile is created, default delta value is set to 100mm.","1. Step 1: Start the Rib feature in 'New' mode.
+2. Step 2: Select 'By Delta' extent option.
+3. Step 3: Verify that the default delta value (100mm) is displayed.
+4. Step 4: Click OK.",Default Delta: 100mm,Rib is created successfully with the default delta value.,2025-08-16 10:04:28
+TC008,Rib Creation - Zero Delta Value - Edge,F003,Rib Extents Definition (By Delta/By Reference/To Closest),Part Design - Solid,Edge,Low,Functional,"Part Design workbench open, a sketch defining the Rib profile is created.","1. Step 1: Start the Rib feature in 'New' mode.
+2. Step 2: Select 'By Delta' extent option.
+3. Step 3: Enter a delta value of 0mm.
+4. Step 4: Click OK.",Delta: 0mm,"Rib is created with zero thickness, effectively a surface.",2025-08-16 10:04:28

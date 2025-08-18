@@ -1,0 +1,183 @@
+Test Case ID,Test Case Name,Feature ID,Feature Name,Module,Test Type,Priority,Category,Preconditions,Test Steps (Few-Shot Format),Test Data,Expected Result,FRD Reference,Generated On
+TC001,Partial Rib Creation - Intersecting Curves,F001,Rib Partial Result,Solid,Positive,High,Functional,Cimatron is launched and a new part is opened.,"The following test scenario for the Rib Partial Result feature is derived from the corresponding line in the FRD document:
+
+1. Launch Cimatron
+2. Open New Part MM file .
+3. Create a shell part and create a sketch with two intersecting curves on the top face.
+4. Invoke Rib From Icon Menu /Main Menu > Solid > Creation > Rib
+5. Select both intersecting curves.
+
+Exp:  Rib feature should create a partial rib up to the intersection point, leaving the remaining portion uncreated.",Two intersecting curves in a sketch.,Partial rib geometry is created up to the intersection point.,1.2. We wish to support a partial result so that the Rib function will give some useable geometry whenever possible.,2025-08-16 10:38:29
+TC002,Partial Rib Creation - Incomplete Profile,F001,Rib Partial Result,Solid,Positive,High,Functional,Cimatron is launched and a new part is opened.,"The following test scenario for the Rib Partial Result feature is derived from the corresponding line in the FRD document:
+
+1. Launch Cimatron
+2. Open New Part MM file .
+3. Create a shell part and create a sketch with an open contour (e.g., a line and an arc that don't connect) on the top face.
+4. Invoke Rib From Icon Menu /Main Menu > Solid > Creation > Rib
+5. Select the open contour elements.
+
+Exp: Rib feature should attempt to create a partial rib based on the available segments of the open contour.",Open contour sketch elements.,Partial rib geometry is created based on the available connected segments.,1.2. We wish to support a partial result so that the Rib function will give some useable geometry whenever possible.,2025-08-16 10:38:29
+TC003,Conflict Solver Information - Interfering Geometry,F001,Rib Partial Result,Solid,Negative,High,Functional,Cimatron is launched and a new part with existing geometry is opened.,"The following test scenario for the Rib Partial Result feature is derived from the corresponding line in the FRD document:
+
+1. Launch Cimatron
+2. Open New Part MM file with some existing geometry.
+3. Create a shell part and create a sketch for a rib that would intersect with the existing geometry.
+4. Invoke Rib From Icon Menu /Main Menu > Solid > Creation > Rib
+5. Select the curve.
+
+Exp: The Conflict Solver should provide specific information about the interference, indicating the interfering elements and suggesting potential solutions (e.g., modifying the rib profile or removing the interfering geometry).",Sketch intersecting with existing geometry.,Conflict Solver provides specific information and recommendations.,1.2. We wish to support a partial result so that the Rib function will give some useable geometry whenever possible.,2025-08-16 10:38:29
+TC001,Rib Creation - New Solid,F002,Rib Solid Creation Mode,Solid,Positive,High,Functional,Cimatron is launched and a new part file is open.,"The following test scenario for the Rib Solid Creation Mode feature is derived from the corresponding line in the FRD document:
+
+1. Launch Cimatron
+2. Open a new part file.
+3. Create a shell part and create a sketch of a curve on the top face.
+4. Invoke Rib From Icon Menu /Main Menu > Solid > Creation > Rib
+5. Select the curve.
+6. In the Rib feature guide, select 'New' for the solid creation mode.
+7. Complete the remaining Rib parameters and click OK.
+
+Exp: A new solid Rib should be created independent of the existing geometry.",N/A,A new solid Rib is created as a separate body.,"2.1. Like other Solid operations, Rib could be thought of as a new solid, or an added solid. For now we do not choose to expose a remove solid (Slot).",2025-08-16 10:38:29
+TC002,Rib Creation - Add Solid,F002,Rib Solid Creation Mode,Solid,Positive,High,Functional,Cimatron is launched and a new part file is open containing a solid body.,"The following test scenario for the Rib Solid Creation Mode feature is derived from the corresponding line in the FRD document:
+
+1. Launch Cimatron
+2. Open a part file containing a solid body.
+3. Create a sketch of a curve on a face of the solid body.
+4. Invoke Rib From Icon Menu /Main Menu > Solid > Creation > Rib
+5. Select the curve.
+6. In the Rib feature guide, select 'Add' for the solid creation mode (default).
+7. Complete the remaining Rib parameters and click OK.
+
+Exp: The Rib should be added to the existing solid body.",N/A,The Rib is added to the existing solid body.,"2.1. Like other Solid operations, Rib could be thought of as a new solid, or an added solid. For now we do not choose to expose a remove solid (Slot).",2025-08-16 10:38:29
+TC003,Default Solid Creation Mode,F002,Rib Solid Creation Mode,Solid,Positive,Medium,Functional,Cimatron is launched and a new part file is open.,"The following test scenario for the Rib Solid Creation Mode feature is derived from the corresponding line in the FRD document:
+
+1. Launch Cimatron
+2. Open a new part file.
+3. Create a shell part and create a sketch of a curve on the top face.
+4. Invoke Rib From Icon Menu /Main Menu > Solid > Creation > Rib
+5. Select the curve.
+6. Observe the default value for solid creation mode in the Rib feature guide.
+
+Exp: The default solid creation mode should be 'Add'.",N/A,The default solid creation mode is 'Add'.,"2.1. Like other Solid operations, Rib could be thought of as a new solid, or an added solid. For now we do not choose to expose a remove solid (Slot).",2025-08-16 10:38:29
+TC004,Invert Active Object Disabled with 'New',F002,Rib Solid Creation Mode,Solid,Positive,High,Functional,Cimatron is launched and a new part file is open.,"The following test scenario for the Rib Solid Creation Mode feature is derived from the corresponding line in the FRD document:
+
+1. Launch Cimatron
+2. Open a new part file.
+3. Create a shell part and create a sketch of a curve on the top face.
+4. Invoke Rib From Icon Menu /Main Menu > Solid > Creation > Rib
+5. Select the curve.
+6. In the Rib feature guide, select 'New' for the solid creation mode.
+7. Check the availability of the 'Invert Active Object' option.
+
+Exp: The 'Invert Active Object' option should be disabled.",N/A,'Invert Active Object' is disabled.,"2.1. Like other Solid operations, Rib could be thought of as a new solid, or an added solid. For now we do not choose to expose a remove solid (Slot).",2025-08-16 10:38:29
+TC005,Pick Reference Object Disabled with 'New',F002,Rib Solid Creation Mode,Solid,Positive,High,Functional,Cimatron is launched and a new part file is open.,"The following test scenario for the Rib Solid Creation Mode feature is derived from the corresponding line in the FRD document:
+
+1. Launch Cimatron
+2. Open a new part file.
+3. Create a shell part and create a sketch of a curve on the top face.
+4. Invoke Rib From Icon Menu /Main Menu > Solid > Creation > Rib
+5. Select the curve.
+6. In the Rib feature guide, select 'New' for the solid creation mode.
+7. Check for the 'Pick reference object' step/option.
+
+Exp: The 'Pick reference object' step/option should be disabled/not available.",N/A,'Pick reference object' is disabled/not available.,"2.1. Like other Solid operations, Rib could be thought of as a new solid, or an added solid. For now we do not choose to expose a remove solid (Slot).",2025-08-16 10:38:29
+TC001,Rib Creation - By Delta (New),F003,Rib Creation Method,Solid,Positive,High,Functional,Cimatron is launched. A new part is open.,"The following test scenario for the Rib Creation Method feature is derived from the corresponding line in the FRD document:
+
+1. Launch Cimatron
+2. Open a new part.
+3. Create a shell part and create a sketch of curves on a face.
+4. Invoke Rib: Main Menu > Solid > Creation > Rib
+5. Select the sketch curves.
+6. MMB / Go to Next Stage.
+7. Select 'New'.
+8. Select 'By Delta'.
+9. Enter a Delta value (e.g., 10mm).
+10. Click OK.
+
+Exp: A new rib should be created with the specified Delta value.",Delta value: 10mm,A new rib is created with the specified Delta value.,3.2. New SP – ‘By Delta’ -or- ‘By Reference’ -or- ‘To Closest’.,2025-08-16 10:38:29
+TC002,Rib Creation - By Reference (New),F003,Rib Creation Method,Solid,Positive,High,Functional,Cimatron is launched. A new part is open. A reference face exists.,"The following test scenario for the Rib Creation Method feature is derived from the corresponding line in the FRD document:
+
+1. Launch Cimatron
+2. Open a new part.
+3. Create a shell part and create a sketch of curves on a face.
+4. Create a reference face.
+5. Invoke Rib: Main Menu > Solid > Creation > Rib
+6. Select the sketch curves.
+7. MMB / Go to Next Stage.
+8. Select 'New'.
+9. Select 'By Reference'.
+10. Select the reference face.
+11. Click OK.
+
+Exp: A new rib should be created extending to the reference face.",Reference face,A new rib is created extending to the reference face.,3.2. New SP – ‘By Delta’ -or- ‘By Reference’ -or- ‘To Closest’.,2025-08-16 10:38:29
+TC003,Rib Creation - To Closest (New),F003,Rib Creation Method,Solid,Positive,High,Functional,Cimatron is launched. A new part is open with intersecting geometry.,"The following test scenario for the Rib Creation Method feature is derived from the corresponding line in the FRD document:
+
+1. Launch Cimatron
+2. Open a new part with intersecting geometry.
+3. Create a shell part and create a sketch of curves on a face.
+4. Invoke Rib: Main Menu > Solid > Creation > Rib
+5. Select the sketch curves.
+6. MMB / Go to Next Stage.
+7. Select 'New'.
+8. Select 'To Closest'.
+9. Click OK.
+
+Exp: A new rib should be created extending to the closest geometry.",Intersecting geometry,A new rib is created extending to the closest geometry.,3.2. New SP – ‘By Delta’ -or- ‘By Reference’ -or- ‘To Closest’.,2025-08-16 10:38:29
+TC004,Rib Creation - To Closest (Add),F003,Rib Creation Method,Solid,Positive,High,Functional,Cimatron is launched. A part with an existing Rib feature is open.,"The following test scenario for the Rib Creation Method feature is derived from the corresponding line in the FRD document:
+
+1. Launch Cimatron
+2. Open a part with an existing Rib feature.
+3. Create a shell part and create a sketch of curves on a face.
+4. Invoke Rib: Main Menu > Solid > Creation > Rib
+5. Select the sketch curves.
+6. MMB / Go to Next Stage.
+7. Select 'Add'.
+8. Verify that only 'To Closest' is available.
+9. Click OK.
+
+Exp: The existing rib should be extended to the closest geometry.",Existing Rib feature,The existing rib is extended to the closest geometry.,3.2. New SP – ‘By Delta’ -or- ‘By Reference’ -or- ‘To Closest’.,2025-08-16 10:38:29
+TC001,Verify Complete Result Default,F004,Rib Result Type,Solid,Positive,High,Functional,Cimatron is launched.,"The following test scenario for the Rib Result Type feature is derived from the corresponding line in the FRD document:
+
+1. Launch Cimatron
+2. Create a shell part and create sketch of multiple curves on top face of shell part.
+3. Invoke Rib From Icon Menu /Main Menu > Solid > Creation > Rib
+4. Select multiple curves.
+5. MMB / Go to Next Stage.
+
+Exp: The 'Result Type' SP should default to 'Complete Result'.",Standard shell part and curve sketch.,The Rib function defaults to 'Complete Result'.,3.4. New SP – ‘Complete Result’ -or- ‘Partial Result’.,2025-08-16 10:38:29
+TC002,Successful Complete Result,F004,Rib Result Type,Solid,Positive,High,Functional,Cimatron is launched. A valid rib profile is sketched.,"The following test scenario for the Rib Result Type feature is derived from the corresponding line in the FRD document:
+
+1. Launch Cimatron
+2. Create a shell part and create sketch of multiple curves on top face of shell part.
+3. Invoke Rib From Icon Menu /Main Menu > Solid > Creation > Rib
+4. Select multiple curves.
+5. MMB / Go to Next Stage.
+6. Ensure 'Complete Result' is selected.
+7. Click OK.
+
+Exp: The rib is created successfully without errors.",Valid rib profile sketch.,A complete rib is generated.,3.4. New SP – ‘Complete Result’ -or- ‘Partial Result’.,2025-08-16 10:38:29
+TC003,Complete Result Failure and Conflict Solver,F004,Rib Result Type,Solid,Negative,High,Functional,"Cimatron is launched. A rib profile is sketched that will cause 'Complete Result' to fail (e.g., intersecting curves).","The following test scenario for the Rib Result Type feature is derived from the corresponding line in the FRD document:
+
+1. Launch Cimatron
+2. Create a shell part and create a sketch with intersecting curves.
+3. Invoke Rib From Icon Menu /Main Menu > Solid > Creation > Rib
+4. Select the intersecting curves.
+5. MMB / Go to Next Stage.
+6. Ensure 'Complete Result' is selected.
+7. Click OK.
+
+Exp: The rib creation fails, and the Conflict Solver is invoked with specific recommendations.",Rib profile sketch with intersecting curves.,Conflict Solver activation with relevant recommendations.,3.4. New SP – ‘Complete Result’ -or- ‘Partial Result’.,2025-08-16 10:38:29
+TC004,Switch to Partial Result,F004,Rib Result Type,Solid,Positive,Medium,Functional,Cimatron is launched. 'Complete Result' has failed for a rib profile.,"The following test scenario for the Rib Result Type feature is derived from the corresponding line in the FRD document:
+
+1. Launch Cimatron.  Reproduce steps from TC003 to fail 'Complete Result'.
+2. In the Conflict Solver dialog, switch to 'Partial Result'.
+3. Click OK.
+
+Exp: Usable rib geometry is generated based on the 'Partial Result' calculation.",Same as TC003.,"Partial, but usable, rib geometry is created.",3.4. New SP – ‘Complete Result’ -or- ‘Partial Result’.,2025-08-16 10:38:29
+TC005,Partial Result Failure and Conflict Solver,F004,Rib Result Type,Solid,Negative,Medium,Functional,Cimatron is launched. A rib profile is sketched that will cause both 'Complete Result' and 'Partial Result' to fail.,"The following test scenario for the Rib Result Type feature is derived from the corresponding line in the FRD document:
+
+1. Launch Cimatron. Create a severely corrupted or invalid rib profile.
+2. Invoke Rib. Select the profile. MMB / Next Stage.
+3. Select 'Partial Result'.
+4. Click OK.
+
+Exp: The rib creation fails, and the Conflict Solver is invoked with further recommendations.",Severely corrupted or invalid rib profile sketch.,Conflict Solver with further recommendations.,3.4. New SP – ‘Complete Result’ -or- ‘Partial Result’.,2025-08-16 10:38:29

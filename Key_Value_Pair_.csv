@@ -1,0 +1,148 @@
+﻿Feature Name,Scenario_Name,Scenario_Description,Testing_Steps
+Rib,,"Create a rib to strengthen regions of the part. The rib is based on a 2D wireframe with a defined thickness, draft angle, direction, and a flat or rounded top.","1. Launch Cimatron
+2. Open Part Environment
+3. Create a shell part and create sketch of multiple curves on top face of shell part
+4. invoke Rib feature from Icon Menu /Main Menu > Solid > Creation > Rib
+5. Select rib centerline curves from which the rib is to be created
+7. Select options as per key.
+6. for creating Rib Click on Ok in feature Guide"
+,Rib_New,"1. In Rib feature after selecting rib centerline curves from which the rib is to be created after that when we go to second stage there is first SP is New
+
+2. Value 'New' indicates that the user is creating a new rib feature rather than adding to an existing one.""
+
+3. When we create Rib with New in feature tree separate object is available for a Rib
+
+4. In second stage there is drop down containing New/ Add option
+
+5. Preview shown in Purple color","1. Launch Cimatron
+2. Open Part Environment
+3. Create a shell part and create sketch of multiple curves on top face of shell part
+4. invoke Rib feature from Icon Menu /Main Menu > Solid > Creation > Rib
+5. Select rib centerline curves from which the rib is to be created
+6. Go to second Stage/MMB.
+7. Select 1st SP as a New.
+8. For creating Rib Click on Ok in feature Guide"
+,Rib_Add,"1. In Rib feature after selecting rib centerline curves from which the rib is to be created aftr that when we go to second stage there is first SP is Add
+
+2. Choosing 'Add' allows the user to append new geometry to an existing Rib instead of starting a new one.
+
+3. In second stage there is drop down containing New/ Add option
+
+4. By Default First SP Value is Add
+
+5. When we select Add, second SP automatically set to To Closest
+
+6.  Preview shown in Blue Color","1. Launch Cimatron
+2. Open Part Environment
+3. Create a shell part and create sketch of multiple curves on top face of shell part
+4. invoke Rib feature from Icon Menu /Main Menu > Solid > Creation > Rib
+5. Select rib centerline curves from which the rib is to be created
+6. Go to second Stage/MMB.
+7. Select 1st SP as a Add.
+8. For creating Rib Click on Ok in feature Guide"
+,Rib_Delta,"1. It defines the perpendicular extrusion or depth of the rib from the sketch profile into the solid body.
+
+2. In Rib feature after selecting rib centerline curves from which the rib is to be created when we go to second stage And select first SP Add there is drop down at second SP containing value ""Delta/To Reference/To Closest"".
+
+3. When we select second SP as a Delta new SP appear as Delta to give value .
+
+4. By Default Value of Delta is 100.","1. Launch Cimatron
+2. Open Part Environment
+3. Create a shell part and create sketch of multiple curves on top face of shell part
+4. invoke Rib feature from Icon Menu /Main Menu > Solid > Creation > Rib
+5. Select rib centerline curves from which the rib is to be created
+6. Go to second Stage/MMB.
+7. Select 1st SP as a Add.
+8. After selecting 1st SP as Add there is 2nd SP drop down from that dropdown select Delta and give delta value.
+8. For creating Rib Click on Ok in feature Guide"
+,Rib_To Reference,"1. A reference geometry (such as a face, plane, or edge) that defines the end limit or termination for the Rib feature. The Rib extends from its sketch until it reaches this reference, rather than using a fixed thickness or distance.
+
+2. In Rib feature after selecting rib centerline curves from which the rib is to be created when we go to second stage And select first SP Add there is drop down at second SP containing value ""Delta/To Reference/To Closest""
+
+3. When we select second SP as To Reference new SP appear as Offset From Ref. to give value 
+
+4. By Default Value of Offset From Ref. is 0","1. Launch Cimatron
+2. Open Part Environment
+3. Create a shell part and create sketch of multiple curves on top face of shell part
+4. invoke Rib feature from Icon Menu /Main Menu > Solid > Creation > Rib
+5. Select rib centerline curves from which the rib is to be created
+6. Go to second Stage/MMB.
+7. Select 1st SP as a Add.
+8. After selecting 1st SP as Add there is 2nd SP drop down from that dropdown select To Reference and give  Offset From Ref. value.
+8. For creating Rib Click on Ok in feature Guide"
+,Rib_To Closest,"1. Automatically extend until it intersects with the closest valid geometry in the solid body. It overrides the need for a manually selected reference and ensures that the Rib terminates at the nearest intersecting surface.
+
+2. In Rib feature after selecting rib centerline curves from which the rib is to be created when we go to second stage And select first SP Add there is drop down at second SP containing value ""Delta/To Reference/To Closest""
+
+3. When we select first SP as Add, second SP automatically set to To Closest","1. Launch Cimatron
+2. Open Part Environment
+3. Create a shell part and create sketch of multiple curves on top face of shell part
+4. invoke Rib feature from Icon Menu /Main Menu > Solid > Creation > Rib
+5. Select rib centerline curves from which the rib is to be created
+6. Go to second Stage/MMB.
+7. Select 1st SP as a Add.
+8. After selecting 1st SP as Add there is 2nd SP drop down from that dropdown select To Closest
+8. For creating Rib Click on Ok in feature Guide"
+,Rib_Top Thickness,"1. Defines the material thickness at the top of the Rib. This value is used when a draft angle is applied, resulting in a tapered rib that is thinner at the top than at the base. If no draft is used, it may match the base thickness.
+
+2. In Rib feature after selecting rib centerline curves from which the rib is to be created when we go to second stage Third SP is ""Top Thickness""","1. Launch Cimatron
+2. Open Part Environment
+3. Create a shell part and create sketch of multiple curves on top face of shell part
+4. invoke Rib feature from Icon Menu /Main Menu > Solid > Creation > Rib
+5. Select rib centerline curves from which the rib is to be created
+6. Go to second Stage/MMB.
+7. Select 1st SP as a Add.
+8. Give Value of Top thicknes as 10 to SP3
+8. For creating Rib Click on Ok in feature Guide"
+,Rib_No Draft Angle,"1. Disables the application of a draft angle on the sidewalls of the Rib feature. If True, the rib is extruded with straight vertical walls. If False, the specified draft angle is applied.
+
+2. In Rib feature after selecting rib centerline curves from which the rib is to be created when we go to second stage Fourth SP is No Draft Angle
+
+3. It is a toggle buttong for ""No Draft Angle/Tapered""
+
+4. By Default Fourth SP is No Draft Angle","1. Launch Cimatron
+2. Open Part Environment
+3. Create a shell part and create sketch of multiple curves on top face of shell part
+4. invoke Rib feature from Icon Menu /Main Menu > Solid > Creation > Rib
+5. Select rib centerline curves from which the rib is to be created
+6. Go to second Stage/MMB.
+7. Select 4th SP as a No Draft Angle.
+8. For creating Rib Click on Ok in feature Guide"
+,Rib_Tapered,"1. Enables tapering of the Rib feature by applying a draft angle to its sidewalls. This causes the rib to gradually change thickness from base to top, typically used in molded or cast parts for easier removal from tooling.
+
+2. In Rib feature after selecting rib centerline curves from which the rib is to be created when we go to second stage Fourth SP is toggle button for ""No Draft Angle/Tapered""
+
+3. When we select fourth SP as Tapered new SP appear as ""Draft Angle"" to give draft value 
+
+4. By Default Value of ""Draft Angle"" is 1° 
+
+5. Maximum value of ""Draft Angle"" is 89° ","1. Launch Cimatron
+2. Open Part Environment
+3. Create a shell part and create sketch of multiple curves on top face of shell part
+4. invoke Rib feature from Icon Menu /Main Menu > Solid > Creation > Rib
+5. Select rib centerline curves from which the rib is to be created
+6. Go to second Stage/MMB.
+7. Select 4th SP as a Tapered.and give Draft Angle Value.
+8. For creating Rib Click on Ok in feature Guide"
+,Rib_Flat Top,"1. Ensures the top surface of the Rib feature remains flat and level, even if tapering is applied to the sidewalls via a draft angle. This is often used when a uniform top surface is required for mating, assembly, or tooling alignment.
+
+2. In Rib feature after selecting rib centerline curves from which the rib is to be created when we go to second stage Fifth SP is toggle button for ""Flat Top/Rounded Top""
+
+3. By Defalut Fifth SP is Flat Top","1. Launch Cimatron
+2. Open Part Environment
+3. Create a shell part and create sketch of multiple curves on top face of shell part
+4. invoke Rib feature from Icon Menu /Main Menu > Solid > Creation > Rib
+5. Select rib centerline curves from which the rib is to be created
+6. Go to second Stage/MMB.
+7. Select 5th SP as a Flat Top.
+8. For creating Rib Click on Ok in feature Guide"
+,Rib_Rounded Top,"1. Shapes the top of the Rib feature with a rounded or filleted profile instead of a flat or sharp edge. This option is often used for aesthetic purposes, stress reduction, or improving mold/tooling flow.
+
+2. In Rib feature after selecting rib centerline curves from which the rib is to be created when we go to second stage Fifth SP is toggle button for ""Flat Top/Rounded Top""","1. Launch Cimatron
+2. Open Part Environment
+3. Create a shell part and create sketch of multiple curves on top face of shell part
+4. invoke Rib feature from Icon Menu /Main Menu > Solid > Creation > Rib
+5. Select rib centerline curves from which the rib is to be created
+6. Go to second Stage/MMB.
+7. Select 5th SP as a Rounded Top.
+8. For creating Rib Click on Ok in feature Guide"
