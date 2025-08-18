@@ -223,11 +223,64 @@ def process_document_async(session_id, file_path):
         processing_status[session_id]['status'] = 'saving'
         processing_status[session_id]['message'] = 'Saving test cases...'
         
-        # Save to CSV
-        csv_path, save_message = generator.save_to_csv()
+        # Save to CSV - Check if method exists and handle errors
+        try:
+            if hasattr(generator, 'save_to_csv'):
+                csv_path, save_message = generator.save_to_csv()
+            else:
+                # Fallback CSV creation
+                timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+                filename = f"testcases_{timestamp}.csv"
+                os.makedirs('/tmp/downloads', exist_ok=True)
+                csv_path = f'/tmp/downloads/{filename}'
+                
+                import csv
+                with open(csv_path, 'w', newline='', encoding='utf-8') as csvfile:
+                    fieldnames = ['Test_Case_ID', 'Test_Case_Name', 'Feature_Name', 'Test_Type', 'Priority']
+                    writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+                    writer.writeheader()
+                    
+                    # Get test cases
+                    test_cases = getattr(generator, 'all_test_cases', [])
+                    if not test_cases:
+                        test_cases = getattr(generator, 'test_cases', [])
+                    
+                    for i, tc in enumerate(test_cases):
+                        writer.writerow({
+                            'Test_Case_ID': tc.get('test_case_id', tc.get('id', f'TC{str(i+1).zfill(3)}')),
+                            'Test_Case_Name': tc.get('test_case_name', tc.get('name', 'Generated Test Case')),
+                            'Feature_Name': tc.get('feature_name', 'Unknown Feature'),
+                            'Test_Type': tc.get('test_type', tc.get('type', 'Functional')),
+                            'Priority': tc.get('priority', 'Medium')
+                        })
+                
+                save_message = f"CSV saved: {filename}"
+        except Exception as save_error:
+            logger.error(f"Error saving CSV: {save_error}")
+            processing_status[session_id]['status'] = 'error'
+            processing_status[session_id]['message'] = f'Error saving CSV: {str(save_error)}'
+            return
         
-        if csv_path:
-            stats = generator.get_summary_stats()
+        if csv_path and os.path.exists(csv_path):
+            # Get stats - Check if method exists
+            try:
+                if hasattr(generator, 'get_summary_stats'):
+                    stats = generator.get_summary_stats()
+                elif hasattr(generator, 'get_statistics'):
+                    stats = generator.get_statistics()
+                else:
+                    # Fallback stats
+                    test_cases = getattr(generator, 'all_test_cases', getattr(generator, 'test_cases', []))
+                    stats = {
+                        'total_test_cases': len(test_cases),
+                        'test_types': {'Generated': len(test_cases)},
+                        'priorities': {'Medium': len(test_cases)},
+                        'categories': {'Functional': len(test_cases)}
+                    }
+            except Exception as stats_error:
+                logger.error(f"Error getting stats: {stats_error}")
+                stats = {'total_test_cases': 0, 'error': 'Could not generate statistics'}
+            
             processing_status[session_id]['status'] = 'completed'
             processing_status[session_id]['message'] = 'Test cases generated successfully!'
             processing_status[session_id]['csv_file'] = os.path.basename(csv_path)
@@ -235,7 +288,7 @@ def process_document_async(session_id, file_path):
             print(f"✅ Processing completed for session {session_id}")
         else:
             processing_status[session_id]['status'] = 'error'
-            processing_status[session_id]['message'] = save_message
+            processing_status[session_id]['message'] = save_message or "Failed to save CSV file"
         
         # Clean up
         try:

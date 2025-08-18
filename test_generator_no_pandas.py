@@ -41,7 +41,7 @@ class TestCaseGenerator:
                 if progress_callback:
                     progress_callback(f"Generating test cases for feature {i+1}/{len(features)}: {feature.get('name', 'Unknown')}")
                 
-                test_cases = self.gemini_client.generate_test_cases(feature)
+                test_cases = self.gemini_client.generate_test_cases_for_feature(feature)
                 
                 if test_cases and 'test_cases' in test_cases:
                     for test_case in test_cases['test_cases']:
@@ -85,6 +85,105 @@ class TestCaseGenerator:
                 stats['boundary_test_cases'] += 1
             elif 'edge' in test_type:
                 stats['edge_test_cases'] += 1
+        
+        return stats
+    
+    def save_to_csv(self):
+        """Save test cases to CSV format"""
+        try:
+            timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+            filename = f"generated_testcases_{timestamp}.csv"
+            
+            # Get download folder from config
+            download_folder = getattr(Config, 'DOWNLOAD_FOLDER', '/tmp/downloads')
+            os.makedirs(download_folder, exist_ok=True)
+            filepath = os.path.join(download_folder, filename)
+            
+            # Define CSV columns
+            fieldnames = [
+                'Test_Case_ID', 'Test_Case_Name', 'Feature_ID', 'Feature_Name',
+                'Module', 'Test_Type', 'Priority', 'Category', 'Preconditions',
+                'Test_Steps', 'Test_Data', 'Expected_Result', 'FRD_Reference', 'Generated_On'
+            ]
+            
+            with open(filepath, 'w', newline='', encoding='utf-8') as csvfile:
+                writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+                writer.writeheader()
+                
+                if self.all_test_cases:
+                    for test_case in self.all_test_cases:
+                        # Map fields to CSV columns
+                        csv_row = {
+                            'Test_Case_ID': test_case.get('test_case_id', test_case.get('id', '')),
+                            'Test_Case_Name': test_case.get('test_case_name', test_case.get('name', '')),
+                            'Feature_ID': test_case.get('feature_id', ''),
+                            'Feature_Name': test_case.get('feature_name', ''),
+                            'Module': test_case.get('module', ''),
+                            'Test_Type': test_case.get('test_type', test_case.get('type', '')),
+                            'Priority': test_case.get('priority', ''),
+                            'Category': test_case.get('category', ''),
+                            'Preconditions': test_case.get('preconditions', ''),
+                            'Test_Steps': test_case.get('test_steps_formatted', test_case.get('test_steps', '')),
+                            'Test_Data': test_case.get('test_data', ''),
+                            'Expected_Result': test_case.get('expected_result', ''),
+                            'FRD_Reference': test_case.get('frd_reference', ''),
+                            'Generated_On': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                        }
+                        writer.writerow(csv_row)
+                else:
+                    # Write empty row if no test cases
+                    empty_row = {field: '' for field in fieldnames}
+                    writer.writerow(empty_row)
+            
+            logger.info(f"CSV file saved: {filepath}")
+            return filepath, f"CSV file saved successfully: {filename}"
+            
+        except Exception as e:
+            logger.error(f"Error saving CSV: {str(e)}")
+            return None, f"Error saving CSV: {str(e)}"
+    
+    def get_summary_stats(self):
+        """Get summary statistics using native Python"""
+        if not self.all_test_cases:
+            return {
+                'total_test_cases': 0,
+                'test_types': {},
+                'priorities': {},
+                'categories': {},
+                'modules': {},
+                'features': {}
+            }
+        
+        stats = {
+            'total_test_cases': len(self.all_test_cases),
+            'test_types': {},
+            'priorities': {},
+            'categories': {},
+            'modules': {},
+            'features': {}
+        }
+        
+        # Count occurrences using native Python
+        for tc in self.all_test_cases:
+            # Test types
+            test_type = tc.get('test_type', tc.get('type', 'Unknown'))
+            stats['test_types'][test_type] = stats['test_types'].get(test_type, 0) + 1
+            
+            # Priorities  
+            priority = tc.get('priority', 'Unknown')
+            stats['priorities'][priority] = stats['priorities'].get(priority, 0) + 1
+            
+            # Categories
+            category = tc.get('category', 'Unknown')
+            stats['categories'][category] = stats['categories'].get(category, 0) + 1
+            
+            # Modules
+            module = tc.get('module', 'Unknown')
+            stats['modules'][module] = stats['modules'].get(module, 0) + 1
+            
+            # Features
+            feature = tc.get('feature_name', 'Unknown')
+            stats['features'][feature] = stats['features'].get(feature, 0) + 1
         
         return stats
     
