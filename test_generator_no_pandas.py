@@ -45,12 +45,30 @@ class TestCaseGenerator:
                 
                 if test_cases and 'test_cases' in test_cases:
                     for test_case in test_cases['test_cases']:
-                        test_case['feature_name'] = feature.get('name', 'Unknown')
-                        test_case['feature_id'] = feature.get('id', f'feature_{i+1}')
+                        # Enhanced feature name handling
+                        feature_name = feature.get('feature_name', feature.get('name', f'Feature_{i+1}'))
+                        feature_id = feature.get('feature_id', feature.get('id', f'F{str(i+1).zfill(3)}'))
+                        
+                        # Ensure proper field mapping
+                        test_case['feature_name'] = feature_name
+                        test_case['feature_id'] = feature_id
+                        test_case['module'] = feature.get('module', test_case.get('module', 'Unknown'))
+                        
+                        # Fix field name inconsistencies
+                        if 'test_case_id' not in test_case and 'id' in test_case:
+                            test_case['test_case_id'] = test_case['id']
+                        if 'test_case_name' not in test_case and 'name' in test_case:
+                            test_case['test_case_name'] = test_case['name']
+                        
                         all_test_cases.append(test_case)
                         
+                    logger.info(f"Generated {len(test_cases['test_cases'])} test cases for feature: {feature_name}")
+                else:
+                    logger.warning(f"No test cases generated for feature: {feature.get('name', 'Unknown')}")
+                        
             except Exception as e:
-                logger.error(f"Error generating test cases for feature {feature.get('name', 'Unknown')}: {e}")
+                feature_name = feature.get('feature_name', feature.get('name', 'Unknown'))
+                logger.error(f"Error generating test cases for feature {feature_name}: {e}")
                 continue
         
         self.all_test_cases = all_test_cases
@@ -208,18 +226,49 @@ class TestCaseGenerator:
         filepath = os.path.join(download_folder, filename)
         
         try:
-            # Get all unique field names
-            fieldnames = set()
+            # Define standard field order for better readability
+            standard_fields = [
+                'feature_name', 'feature_id', 'module', 'test_case_id', 'test_case_name',
+                'description', 'priority', 'test_type', 'complexity', 'prerequisites',
+                'test_steps', 'expected_result', 'test_data', 'notes'
+            ]
+            
+            # Get all unique field names from data
+            all_fields = set()
             for test_case in self.all_test_cases:
-                fieldnames.update(test_case.keys())
+                all_fields.update(test_case.keys())
             
-            fieldnames = sorted(list(fieldnames))
+            # Combine standard fields with any additional fields found
+            fieldnames = []
+            for field in standard_fields:
+                if field in all_fields:
+                    fieldnames.append(field)
+                    all_fields.remove(field)
             
-            # Write CSV
+            # Add any remaining fields
+            fieldnames.extend(sorted(all_fields))
+            
+            # Write CSV with proper formatting
             with open(filepath, 'w', newline='', encoding='utf-8') as csvfile:
                 writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
                 writer.writeheader()
-                writer.writerows(self.all_test_cases)
+                
+                # Write data with formatted list fields
+                for test_case in self.all_test_cases:
+                    formatted_case = {}
+                    for field in fieldnames:
+                        value = test_case.get(field, '')
+                        
+                        # Format list fields properly
+                        if field in ['test_steps', 'prerequisites'] and isinstance(value, list):
+                            if field == 'test_steps':
+                                value = '; '.join([f"{i+1}. {step}" for i, step in enumerate(value)])
+                            else:
+                                value = '; '.join(value)
+                        
+                        formatted_case[field] = str(value) if value else ''
+                    
+                    writer.writerow(formatted_case)
             
             return filename, "Test cases exported successfully"
         except Exception as e:
@@ -237,30 +286,121 @@ class TestCaseGenerator:
         
         try:
             from openpyxl import Workbook
+            from openpyxl.styles import Font, Alignment, PatternFill, Border, Side
+            
             wb = Workbook()
             ws = wb.active
             ws.title = "Test Cases"
             
-            # Get headers
-            if self.all_test_cases:
-                headers = sorted(self.all_test_cases[0].keys())
-                ws.append(headers)
-                
-                # Add data
-                for test_case in self.all_test_cases:
-                    row = [test_case.get(header, '') for header in headers]
-                    ws.append(row)
+            # Define standard headers for better structure
+            standard_headers = [
+                'feature_name', 'feature_id', 'module', 'test_case_id', 'test_case_name',
+                'description', 'priority', 'test_type', 'complexity', 'prerequisites',
+                'test_steps', 'expected_result', 'test_data', 'notes'
+            ]
+            
+            # Create display headers
+            display_headers = [
+                'Feature Name', 'Feature ID', 'Module', 'Test Case ID', 'Test Case Name',
+                'Description', 'Priority', 'Test Type', 'Complexity', 'Prerequisites',
+                'Test Steps', 'Expected Result', 'Test Data', 'Notes'
+            ]
+            
+            # Add formatted headers
+            header_font = Font(bold=True, color="FFFFFF")
+            header_fill = PatternFill(start_color="366092", end_color="366092", fill_type="solid")
+            header_alignment = Alignment(horizontal="center", vertical="center")
+            
+            for col, header in enumerate(display_headers, 1):
+                cell = ws.cell(row=1, column=col, value=header)
+                cell.font = header_font
+                cell.fill = header_fill
+                cell.alignment = header_alignment
+            
+            # Add data with proper formatting
+            for row_idx, test_case in enumerate(self.all_test_cases, 2):
+                for col_idx, field in enumerate(standard_headers, 1):
+                    value = test_case.get(field, '')
+                    
+                    # Format list fields properly
+                    if field in ['test_steps', 'prerequisites'] and isinstance(value, list):
+                        if field == 'test_steps':
+                            value = '\n'.join([f"{i+1}. {step}" for i, step in enumerate(value)])
+                        else:
+                            value = '\n'.join(value)
+                    
+                    cell = ws.cell(row=row_idx, column=col_idx, value=str(value))
+                    cell.alignment = Alignment(wrap_text=True, vertical="top")
+            
+            # Auto-adjust column widths
+            for column in ws.columns:
+                max_length = 0
+                column_letter = column[0].column_letter
+                for cell in column:
+                    try:
+                        if len(str(cell.value)) > max_length:
+                            max_length = len(str(cell.value))
+                    except:
+                        pass
+                adjusted_width = min(max_length + 2, 50)
+                ws.column_dimensions[column_letter].width = adjusted_width
             
             # Add statistics sheet
             stats_ws = wb.create_sheet("Statistics")
             stats = self.get_statistics()
-            stats_ws.append(["Metric", "Value"])
-            for metric, value in stats.items():
-                stats_ws.append([metric, value])
+            
+            # Format statistics sheet
+            stats_ws.cell(row=1, column=1, value="Metric").font = Font(bold=True)
+            stats_ws.cell(row=1, column=2, value="Value").font = Font(bold=True)
+            
+            for row_idx, (metric, value) in enumerate(stats.items(), 2):
+                stats_ws.cell(row=row_idx, column=1, value=metric)
+                stats_ws.cell(row=row_idx, column=2, value=str(value))
             
             wb.save(filepath)
             
             return filename, "Test cases exported to Excel successfully"
+        except ImportError:
+            logger.warning("openpyxl not available, falling back to CSV format")
+            return self.export_to_csv_fallback(filepath.replace('.xlsx', '.csv'))
         except Exception as e:
             logger.error(f"Error exporting Excel: {e}")
             return None, f"Error exporting Excel: {str(e)}"
+    
+    def export_to_csv_fallback(self, filepath):
+        """Fallback CSV export method"""
+        try:
+            filename = os.path.basename(filepath)
+            
+            # Define standard field order
+            standard_fields = [
+                'feature_name', 'feature_id', 'module', 'test_case_id', 'test_case_name',
+                'description', 'priority', 'test_type', 'complexity', 'prerequisites',
+                'test_steps', 'expected_result', 'test_data', 'notes'
+            ]
+            
+            with open(filepath, 'w', newline='', encoding='utf-8') as csvfile:
+                writer = csv.DictWriter(csvfile, fieldnames=standard_fields, extrasaction='ignore')
+                writer.writeheader()
+                
+                for test_case in self.all_test_cases:
+                    # Format data for CSV
+                    formatted_case = {}
+                    for field in standard_fields:
+                        value = test_case.get(field, '')
+                        
+                        # Format list fields properly
+                        if isinstance(value, list):
+                            if field == 'test_steps':
+                                value = '; '.join([f"{i+1}. {step}" for i, step in enumerate(value)])
+                            else:
+                                value = '; '.join(value)
+                        
+                        formatted_case[field] = str(value) if value else ''
+                    
+                    writer.writerow(formatted_case)
+            
+            return filename, "Test cases exported to CSV successfully (fallback mode)"
+        except Exception as e:
+            logger.error(f"Error in CSV fallback export: {e}")
+            return None, f"Error in CSV fallback export: {str(e)}"
