@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: ai-testcase-generator
+    env: python
+    plan: free
+    buildCommand: pip install --upgrade pip && pip install --no-cache-dir -r requirements_render.txt
+    startCommand: gunicorn --bind 0.0.0.0:$PORT --workers 1 --timeout 120 --preload app:app
+    healthCheckPath: /health
+    envVars:
+      - key: FLASK_ENV
+        value: production
+      - key: RENDER
+        value: true
+      - key: NO_PANDAS
+        value: true
+      - key: SECRET_KEY
+        value: thisissecretkey
+      - key: GEMINI_API_KEY
+        value: AIzaSyBEqJgbfk40_oU-G4nzCOW9vPwbE2cOc30
