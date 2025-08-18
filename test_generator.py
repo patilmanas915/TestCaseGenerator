@@ -37,18 +37,27 @@ class TestCaseGenerator:
         
         # Generate test cases for each feature
         for idx, feature in enumerate(features, 1):
-            logger.info(f"Generating test cases for Feature {idx}/{len(features)}: {feature.get('feature_name')}")
+            # Get feature name properly - this was working correctly
+            feature_name = feature.get('feature_name', feature.get('name', f'Feature_{idx}'))
+            
+            logger.info(f"Generating test cases for Feature {idx}/{len(features)}: {feature_name}")
             
             if progress_callback:
-                progress_callback(f"Generating test cases for feature {idx}/{len(features)}: {feature.get('feature_name')}")
+                progress_callback(f"Generating test cases for feature {idx}/{len(features)}: {feature_name}")
             
             test_cases_data = self.gemini_client.generate_test_cases_for_feature(feature)
             
             if test_cases_data and 'test_cases' in test_cases_data:
+                # Add feature information to each test case
+                for test_case in test_cases_data['test_cases']:
+                    test_case['feature_name'] = feature_name
+                    test_case['feature_id'] = feature.get('feature_id', feature.get('id', f'F{idx:03d}'))
+                    test_case['module'] = feature.get('module', test_case.get('module', 'Unknown'))
+                
                 self.all_test_cases.extend(test_cases_data['test_cases'])
-                logger.info(f"Generated {len(test_cases_data['test_cases'])} test cases")
+                logger.info(f"Generated {len(test_cases_data['test_cases'])} test cases for {feature_name}")
             else:
-                logger.warning(f"Failed to generate test cases for {feature.get('feature_name')}")
+                logger.warning(f"Failed to generate test cases for {feature_name}")
             
             # Add delay to respect API rate limits
             self.gemini_client.rate_limit_delay()
@@ -97,7 +106,7 @@ class TestCaseGenerator:
                 'Category': clean_text(test_case.get('category', '')),
                 'Gap_Coverage': clean_text(test_case.get('gap_coverage', '')),
                 'Preconditions': clean_text(test_case.get('preconditions', '')),
-                'Test_Steps_Few_Shot_Format': test_steps_formatted,
+                'Steps': test_steps_formatted,  # Changed from Test_Steps_Few_Shot_Format
                 'Test_Data': clean_text(test_case.get('test_data', '')),
                 'Expected_Result': clean_text(test_case.get('expected_result', '')),
                 'FRD_Reference': clean_text(test_case.get('frd_reference', '')),
@@ -139,26 +148,66 @@ class TestCaseGenerator:
                     row = [row_data.get(header, '') for header in headers]
                     ws.append(row)
                 
-                # Auto-adjust column widths
+                # Auto-adjust column widths with better multi-line content handling
                 for column in ws.columns:
                     max_length = 0
                     column_letter = column[0].column_letter
                     
                     for cell in column:
                         if cell.value:
-                            cell_length = len(str(cell.value))
+                            # Handle multi-line content by checking line length
+                            cell_value = str(cell.value)
+                            if '\n' in cell_value:
+                                # For multi-line content, use the longest line
+                                lines = cell_value.split('\n')
+                                max_line_length = max(len(line) for line in lines) if lines else 0
+                                cell_length = max_line_length
+                            else:
+                                cell_length = len(cell_value)
+                            
                             if cell_length > max_length:
                                 max_length = cell_length
                     
-                    # Set column width (with some padding)
-                    adjusted_width = min(max_length + 2, 50)  # Max width of 50
+                    # Set column width with better sizing for different content types
+                    if max_length < 15:
+                        adjusted_width = max_length + 5  # Short content gets more padding
+                    elif max_length < 50:
+                        adjusted_width = max_length + 3  # Medium content
+                    else:
+                        adjusted_width = min(max_length + 2, 100)  # Long content, max 100 chars
+                    
                     ws.column_dimensions[column_letter].width = adjusted_width
                 
-                # Set specific column widths for better readability
-                if len(headers) >= 11:  # Test Steps column
-                    ws.column_dimensions[ws.cell(1, 11).column_letter].width = 80
-                if len(headers) >= 13:  # Expected Result column
-                    ws.column_dimensions[ws.cell(1, 13).column_letter].width = 40
+                # Set specific minimum widths for important columns
+                column_widths = {
+                    'Steps': 80,  # Steps column needs more space
+                    'Test_Case_Name': 40,
+                    'Expected_Result': 50,
+                    'Description': 40,
+                    'Preconditions': 30
+                }
+                
+                # Apply minimum widths
+                for col_idx, header in enumerate(headers, 1):
+                    column_letter = ws.cell(1, col_idx).column_letter
+                    if header in column_widths:
+                        current_width = ws.column_dimensions[column_letter].width
+                        min_width = column_widths[header]
+                        ws.column_dimensions[column_letter].width = max(current_width, min_width)
+                
+                # Auto-adjust row heights for multi-line content
+                for row in ws.iter_rows(min_row=2):  # Skip header row
+                    max_lines = 1
+                    for cell in row:
+                        if cell.value and '\n' in str(cell.value):
+                            lines = str(cell.value).count('\n') + 1
+                            max_lines = max(max_lines, lines)
+                        
+                        # Enable text wrapping for all cells
+                        cell.alignment = Alignment(wrap_text=True, vertical='top')
+                    
+                    # Set row height based on content (15 points per line)
+                    ws.row_dimensions[row[0].row].height = max_lines * 15
                 
                 # Add header formatting
                 header_font = Font(bold=True, color="FFFFFF")

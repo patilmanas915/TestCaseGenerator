@@ -38,8 +38,11 @@ class TestCaseGenerator:
         all_test_cases = []
         for i, feature in enumerate(features):
             try:
+                # Fix feature name extraction - use feature_name first, then name as fallback
+                feature_display_name = feature.get('feature_name', feature.get('name', f'Feature_{i+1}'))
+                
                 if progress_callback:
-                    progress_callback(f"Generating test cases for feature {i+1}/{len(features)}: {feature.get('name', 'Unknown')}")
+                    progress_callback(f"Generating test cases for feature {i+1}/{len(features)}: {feature_display_name}")
                 
                 test_cases = self.gemini_client.generate_test_cases_for_feature(feature)
                 
@@ -62,13 +65,13 @@ class TestCaseGenerator:
                         
                         all_test_cases.append(test_case)
                         
-                    logger.info(f"Generated {len(test_cases['test_cases'])} test cases for feature: {feature_name}")
+                    logger.info(f"Generated {len(test_cases['test_cases'])} test cases for feature: {feature_display_name}")
                 else:
-                    logger.warning(f"No test cases generated for feature: {feature.get('name', 'Unknown')}")
+                    logger.warning(f"No test cases generated for feature: {feature_display_name}")
                         
             except Exception as e:
-                feature_name = feature.get('feature_name', feature.get('name', 'Unknown'))
-                logger.error(f"Error generating test cases for feature {feature_name}: {e}")
+                feature_display_name = feature.get('feature_name', feature.get('name', f'Feature_{i+1}'))
+                logger.error(f"Error generating test cases for feature {feature_display_name}: {e}")
                 continue
         
         self.all_test_cases = all_test_cases
@@ -303,7 +306,7 @@ class TestCaseGenerator:
             display_headers = [
                 'Feature Name', 'Feature ID', 'Module', 'Test Case ID', 'Test Case Name',
                 'Description', 'Priority', 'Test Type', 'Complexity', 'Prerequisites',
-                'Test Steps', 'Expected Result', 'Test Data', 'Notes'
+                'Steps', 'Expected Result', 'Test Data', 'Notes'  # Changed Test Steps to just Steps
             ]
             
             # Add formatted headers
@@ -332,18 +335,68 @@ class TestCaseGenerator:
                     cell = ws.cell(row=row_idx, column=col_idx, value=str(value))
                     cell.alignment = Alignment(wrap_text=True, vertical="top")
             
-            # Auto-adjust column widths
+            # Auto-adjust column widths with better multi-line content handling
             for column in ws.columns:
                 max_length = 0
                 column_letter = column[0].column_letter
                 for cell in column:
                     try:
-                        if len(str(cell.value)) > max_length:
-                            max_length = len(str(cell.value))
+                        if cell.value:
+                            # Handle multi-line content by checking line length
+                            cell_value = str(cell.value)
+                            if '\n' in cell_value:
+                                # For multi-line content, use the longest line
+                                lines = cell_value.split('\n')
+                                max_line_length = max(len(line) for line in lines) if lines else 0
+                                cell_length = max_line_length
+                            else:
+                                cell_length = len(cell_value)
+                            
+                            if cell_length > max_length:
+                                max_length = cell_length
                     except:
                         pass
-                adjusted_width = min(max_length + 2, 50)
+                
+                # Set column width with better sizing for different content types
+                if max_length < 15:
+                    adjusted_width = max_length + 5  # Short content gets more padding
+                elif max_length < 50:
+                    adjusted_width = max_length + 3  # Medium content
+                else:
+                    adjusted_width = min(max_length + 2, 100)  # Long content, max 100 chars
+                
                 ws.column_dimensions[column_letter].width = adjusted_width
+            
+            # Set specific minimum widths for important columns
+            column_widths = {
+                'Steps': 80,  # Steps column needs more space
+                'Test Case Name': 40,
+                'Expected Result': 50,
+                'Description': 40,
+                'Prerequisites': 30
+            }
+            
+            # Apply minimum widths
+            for col_idx, header in enumerate(display_headers, 1):
+                column_letter = ws.cell(1, col_idx).column_letter
+                if header in column_widths:
+                    current_width = ws.column_dimensions[column_letter].width
+                    min_width = column_widths[header]
+                    ws.column_dimensions[column_letter].width = max(current_width, min_width)
+            
+            # Auto-adjust row heights for multi-line content
+            for row in ws.iter_rows(min_row=2):  # Skip header row
+                max_lines = 1
+                for cell in row:
+                    if cell.value and '\n' in str(cell.value):
+                        lines = str(cell.value).count('\n') + 1
+                        max_lines = max(max_lines, lines)
+                    
+                    # Enable text wrapping for all cells
+                    cell.alignment = Alignment(wrap_text=True, vertical='top')
+                
+                # Set row height based on content (15 points per line)
+                ws.row_dimensions[row[0].row].height = max_lines * 15
             
             # Add statistics sheet
             stats_ws = wb.create_sheet("Statistics")

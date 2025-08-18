@@ -68,8 +68,16 @@ except ImportError as e:
 generator_imported = False
 print("🔄 Importing test generator...")
 
-# Try pandas-free version first (for Render)
-if os.environ.get('RENDER') or os.environ.get('NO_PANDAS'):
+# Try standard version first (it works better for feature names)
+try:
+    from test_generator import TestCaseGenerator
+    print("✅ Using standard test generator (best feature handling)")
+    generator_imported = True
+except ImportError as e:
+    print(f"⚠️ standard generator import failed: {e}")
+
+# Try pandas-free version as fallback (for Render)
+if not generator_imported and (os.environ.get('RENDER') or os.environ.get('NO_PANDAS')):
     try:
         from test_generator_no_pandas import TestCaseGenerator
         print("✅ Using pandas-free test generator for Render")
@@ -85,15 +93,6 @@ if not generator_imported:
         generator_imported = True
     except ImportError as e:
         print(f"⚠️ render generator import failed: {e}")
-
-# Try standard version
-if not generator_imported:
-    try:
-        from test_generator import TestCaseGenerator
-        print("✅ Using standard test generator")
-        generator_imported = True
-    except ImportError as e:
-        print(f"⚠️ standard generator import failed: {e}")
 
 # Create fallback generator if none worked
 if not generator_imported:
