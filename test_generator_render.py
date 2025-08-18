@@ -6,12 +6,8 @@ from config import Config
 from gemini_client import GeminiClient
 import logging
 
-# Try to import pandas, fallback to native Python if not available
-try:
-    import pandas as pd
-    PANDAS_AVAILABLE = True
-except ImportError:
-    PANDAS_AVAILABLE = False
+# Using pandas-free implementation for Render compatibility
+PANDAS_AVAILABLE = False
 
 logger = logging.getLogger(__name__)
 

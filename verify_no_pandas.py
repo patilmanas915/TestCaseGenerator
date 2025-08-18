@@ -9,6 +9,10 @@ import sys
 
 def check_file_for_pandas(filepath):
     """Check a single file for pandas imports"""
+    # Skip this verification script itself
+    if 'verify_no_pandas.py' in filepath or 'scan_all_issues.py' in filepath:
+        return False, []
+        
     pandas_patterns = [
         r'^import pandas(?!\s+#.*fallback)',  # Direct import pandas (not in fallback)
         r'from pandas',

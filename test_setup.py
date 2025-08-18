@@ -19,12 +19,8 @@ def test_imports():
         return False
     
     try:
-        # Try to import pandas, but don't fail if not available
-        try:
-            import pandas
-            print("  ✅ Pandas imported successfully")
-        except ImportError:
-            print("  ⚠️  Pandas not available (OK for Render deployment)")
+        # Skip pandas - not required for Render deployment
+        print("  ⚠️  Pandas skipped (not required for Render)")
     except Exception as e:
         print(f"  ⚠️  Pandas check failed: {e}")
         # Don't return False for pandas import failure
