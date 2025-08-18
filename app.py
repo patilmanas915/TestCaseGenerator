@@ -18,13 +18,20 @@ except ImportError:
 from document_processor import DocumentProcessor
 
 # Import TestCaseGenerator based on environment
-if os.environ.get('RENDER') or os.environ.get('USE_MINIMAL_DEPS'):
+if os.environ.get('RENDER') or os.environ.get('USE_MINIMAL_DEPS') or os.environ.get('NO_PANDAS'):
     try:
-        from test_generator_render import TestCaseGenerator
+        from test_generator_no_pandas import TestCaseGenerator
+        print("Using pandas-free test generator for Render")
     except ImportError:
-        from test_generator import TestCaseGenerator
+        try:
+            from test_generator_render import TestCaseGenerator
+            print("Using render test generator")
+        except ImportError:
+            from test_generator import TestCaseGenerator
+            print("Using standard test generator")
 else:
     from test_generator import TestCaseGenerator
+    print("Using standard test generator with pandas")
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)

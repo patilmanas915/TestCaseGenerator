@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: ai-testcase-generator
+    env: python
+    plan: free
+    region: oregon
+    buildCommand: pip install --no-cache-dir -r requirements_render.txt
+    startCommand: gunicorn --bind 0.0.0.0:$PORT --workers 1 --timeout 300 --max-requests 1000 app:app
+    envVars:
+      - key: FLASK_ENV
+        value: production
+      - key: FLASK_DEBUG
+        value: false
+      - key: RENDER
+        value: true
+      - key: NO_PANDAS
+        value: true
+    healthCheckPath: /health
+    autoDeploy: true
