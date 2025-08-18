@@ -7,7 +7,14 @@ import logging
 from datetime import datetime
 import threading
 
+# Import configurations
 from config import Config
+try:
+    from config_render import get_config
+    ConfigClass = get_config()
+except ImportError:
+    ConfigClass = Config
+
 from document_processor import DocumentProcessor
 from test_generator import TestCaseGenerator
 
@@ -16,8 +23,12 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
-app.config.from_object(Config)
+app.config.from_object(ConfigClass)
 CORS(app)
+
+# Initialize app for Render if needed
+if hasattr(ConfigClass, 'init_app'):
+    ConfigClass.init_app(app)
 
 # Create required directories
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
@@ -191,7 +202,9 @@ def health_check():
     return jsonify({
         'status': 'healthy',
         'timestamp': datetime.now().isoformat(),
-        'gemini_api_configured': bool(Config.GEMINI_API_KEY)
+        'gemini_api_configured': bool(ConfigClass.GEMINI_API_KEY),
+        'environment': os.environ.get('FLASK_ENV', 'development'),
+        'render_deployment': bool(os.environ.get('RENDER'))
     })
 
 if __name__ == '__main__':
