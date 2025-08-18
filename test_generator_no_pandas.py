@@ -94,10 +94,19 @@ class TestCaseGenerator:
             timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
             filename = f"generated_testcases_{timestamp}.csv"
             
-            # Get download folder from config
-            download_folder = getattr(Config, 'DOWNLOAD_FOLDER', '/tmp/downloads')
+            # Get download folder - try config first, then fallbacks
+            try:
+                download_folder = getattr(Config, 'DOWNLOAD_FOLDER', 'downloads')
+                # Convert relative to absolute if needed
+                if not os.path.isabs(download_folder):
+                    download_folder = os.path.join(os.getcwd(), download_folder)
+            except:
+                download_folder = '/tmp/downloads'
+                
             os.makedirs(download_folder, exist_ok=True)
             filepath = os.path.join(download_folder, filename)
+            
+            print(f"💾 Saving CSV to: {filepath}")
             
             # Define CSV columns
             fieldnames = [
@@ -136,10 +145,12 @@ class TestCaseGenerator:
                     writer.writerow(empty_row)
             
             logger.info(f"CSV file saved: {filepath}")
+            print(f"✅ CSV saved successfully at: {filepath}")
             return filepath, f"CSV file saved successfully: {filename}"
             
         except Exception as e:
             logger.error(f"Error saving CSV: {str(e)}")
+            print(f"❌ Error saving CSV: {str(e)}")
             return None, f"Error saving CSV: {str(e)}"
     
     def get_summary_stats(self):

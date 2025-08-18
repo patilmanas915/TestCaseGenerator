@@ -231,8 +231,16 @@ def process_document_async(session_id, file_path):
                 # Fallback CSV creation
                 timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
                 filename = f"testcases_{timestamp}.csv"
-                os.makedirs('/tmp/downloads', exist_ok=True)
-                csv_path = f'/tmp/downloads/{filename}'
+                
+                # Use consistent download folder
+                download_folder = app.config.get('DOWNLOAD_FOLDER', 'downloads')
+                if not os.path.isabs(download_folder):
+                    download_folder = os.path.join(os.getcwd(), download_folder)
+                
+                os.makedirs(download_folder, exist_ok=True)
+                csv_path = os.path.join(download_folder, filename)
+                
+                print(f"💾 Fallback CSV save to: {csv_path}")
                 
                 import csv
                 with open(csv_path, 'w', newline='', encoding='utf-8') as csvfile:
@@ -398,17 +406,63 @@ def get_status(session_id):
 def download_file(filename):
     """Download generated file"""
     try:
-        download_folder = app.config.get('DOWNLOAD_FOLDER', '/tmp/downloads')
-        file_path = os.path.join(download_folder, filename)
+        # Try multiple download folder locations
+        possible_folders = [
+            app.config.get('DOWNLOAD_FOLDER', 'downloads'),
+            '/tmp/downloads',
+            'downloads',
+            os.path.join(os.getcwd(), 'downloads')
+        ]
         
-        if not os.path.exists(file_path):
-            return jsonify({'error': 'File not found'}), 404
+        file_path = None
+        for folder in possible_folders:
+            test_path = os.path.join(folder, filename)
+            if os.path.exists(test_path):
+                file_path = test_path
+                print(f"📁 Found file at: {file_path}")
+                break
+        
+        if not file_path:
+            # Log all attempted paths for debugging
+            print(f"❌ File not found. Searched in:")
+            for folder in possible_folders:
+                test_path = os.path.join(folder, filename)
+                print(f"   - {test_path} (exists: {os.path.exists(test_path)})")
+            return jsonify({'error': f'File not found: {filename}'}), 404
         
         return send_file(file_path, as_attachment=True, download_name=filename)
         
     except Exception as e:
         logger.error(f"Download error: {str(e)}")
         return jsonify({'error': f'Download failed: {str(e)}'}), 500
+
+@app.route('/files')
+def list_files():
+    """List available files for debugging"""
+    try:
+        possible_folders = [
+            app.config.get('DOWNLOAD_FOLDER', 'downloads'),
+            '/tmp/downloads',
+            'downloads',
+            os.path.join(os.getcwd(), 'downloads')
+        ]
+        
+        files_info = {}
+        for folder in possible_folders:
+            if os.path.exists(folder):
+                files_in_folder = [f for f in os.listdir(folder) if f.endswith('.csv')]
+                files_info[folder] = files_in_folder
+            else:
+                files_info[folder] = "Directory does not exist"
+        
+        return jsonify({
+            'available_files': files_info,
+            'config_download_folder': app.config.get('DOWNLOAD_FOLDER'),
+            'current_working_directory': os.getcwd()
+        })
+        
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 # Startup
 print("✅ Flask app created successfully")
